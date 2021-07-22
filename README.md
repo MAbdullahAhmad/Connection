@@ -140,8 +140,67 @@ that creates strings in different formats. Input and output examples may describ
     |             |   ]                           |                                  |
     +-------------+-------------------------------+----------------------------------+
 
-***    
 
+### Some Examples:
+
+```php
+  $data = $con->join_select(
+      [ // Fields w.r.t. tables
+        "shops"=>[
+          "id",
+          "title",
+          "email",
+          "phone",
+          "address",
+          "shopkeeper_id",
+        ],
+        "users"=>[
+          "fname",
+          "lname",
+        ]
+      ],
+      [ // Join
+        "users" => [
+          "shops"=>"shopkeeper_id",
+          "users"=>"id",
+        ]
+      ],
+      "shops" // Main Tablename
+    )
+    ->asc() // Associative fetch
+    ->get(); // Get fetched data
+```
+
+```php
+$con->update(
+  [ // Data
+    "fname" => $_POST['fname'],
+    "lname" => $_POST['lname'],
+  ],
+  "users", // Table
+  ["id" => $auth['id']] // Condition
+  );
+```
+
+```php
+$con->update(
+  [ // Data
+    "phone" => $_POST['phone'],
+    "address" => $_POST['address'],
+  ],
+  "customer_data", // Table
+  ["user_id" => $auth['id']] // Condition
+  );
+```
+
+```php
+$con->delete(
+  ["role"=>"s", "id"=>$_POST['id']], // Condition
+  "users" // Table
+);
+```
+
+## Developer
     Developer Info:
     ========= =====
         By        :       Abdullah
