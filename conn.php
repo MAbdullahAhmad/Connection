@@ -9,8 +9,20 @@
     private $sym=["*", "\\", "\"", "'"];
     private $kw=["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "DROP"];
 
-    public function __construct(string $db="", string $usr="root", string $pwd="", string $hst="localhost"){ 
-      return ($this->con=mysqli_connect($this->con_dat["hst"]=$hst, $this->con_dat["usr"]=$usr, $this->con_dat["pwd"]=$pwd, $this->con_dat["db"]=$db))?$this:false;
+    public function __construct(
+      string $db="",
+      string $usr="root",
+      string $pwd="",
+      string $hst="localhost"
+    ){ 
+      return (
+        $this->con = mysqli_connect(
+          $this->con_dat["hst"]=$hst,
+          $this->con_dat["usr"]=$usr,
+          $this->con_dat["pwd"]=$pwd,
+          $this->con_dat["db"]=$db
+        )
+      )?$this:false;
     }
 
     // -- Output
@@ -94,12 +106,14 @@
     # filter elements of array
     public function arr_vld(array $vars){
       foreach ($vars as $key=>$var){
-        if((is_array($var)?!$this->arr_vld($var):!$this->vld($var)) || !$this->vld($key)) return false;
+        if(
+          (is_array($var)? !$this->arr_vld($var): !$this->vld($var)) ||
+          !$this->vld($key)
+        ) return false;
       } return true;
     }
     # important builder method for converting array elements to be used in query.
     public function build(array $arr, int $mod=1){
-      // Under-construction
       $out="";
       switch($mod){
         case 1:
@@ -124,7 +138,13 @@
           foreach ($arr as $tbl=>$inarr){
             $tbls=array_keys($inarr);
             $flds=array_values($inarr);
-            $out.="INNER JOIN `$tbl` ON `".$tbls[0]."`.`".$flds[0]."`=".(is_int($tbls[1])?"'".$flds[1]."'":"`".$tbls[1]."`.`".$flds[1]."` ");
+            $out.=
+              "INNER JOIN `$tbl` ON `".$tbls[0]."`.`".$flds[0]."`=".
+              (
+                is_int($tbls[1])?
+                "'".$flds[1]."'":
+                "`".$tbls[1]."`.`".$flds[1]."` "
+              );
           }
           $out=rtrim($out);
           break;
@@ -132,7 +152,13 @@
           foreach ($arr as $inarr){
             $tbls=array_keys($inarr);
             $flds=array_values($inarr);
-            $out.="`".$tbls[0]."`.`".$flds[0]."`=".(is_int($tbls[1])?"'".$flds[1]."'":("`".$tbls[1]."`.`".$flds[1]."`"))." AND ";
+            $out.=
+              "`".$tbls[0]."`.`".$flds[0]."`=".
+              (
+                is_int($tbls[1])?
+                "'".$flds[1]."'":
+                ("`".$tbls[1]."`.`".$flds[1]."`")
+              )." AND ";
           }
           $out=rtrim($out, "AND ");
           break;
@@ -160,13 +186,18 @@
 
     # run raw sql
     public function qry(string $sql){
-      return ($this->qry=mysqli_query($this->con, $this->sql=$sql))?$this:false;
+      return (
+        $this->qry=
+        mysqli_query($this->con, $this->sql=$sql)
+      )?$this:false;
     }
 
     # switch methods
     public function swdb(string $db){
       if($this->vld($db))
-      return ($this->qry("USE ".$this->con_dat["db"]=$db))?$this:false;
+      return (
+        $this->qry("USE ".$this->con_dat["db"]=$db)
+      )?$this:false;
       return false;
     }
     public function swtbl(string $tbl){
@@ -179,10 +210,16 @@
     # create methods
     public function mkdb(string $db){
       if($this->vld($db))
-      return ($this->qry("CREATE DATABASE ".$this->con_dat["db"]=$db))?$this:false;
+      return (
+        $this->qry("CREATE DATABASE ".$this->con_dat["db"]=$db)
+      )?$this:false;
       return false;
     }
-    public function insert(array $dat, string $tbl="", array $fld=[]){
+    public function insert(
+      array $dat,
+      string $tbl="",
+      array $fld=[]
+    ){
       // Table Name
       if($tbl==""){
         if(empty($this->tbl)) return false;
@@ -217,7 +254,11 @@
     }
 
     # read methods
-    public function select(array $dat=[], string $tbl="", array $cnd=[]){
+    public function select(
+      array $dat=[],
+      string $tbl="",
+      array $cnd=[]
+    ){
       // Table Name
       if($tbl==""){
         if(empty($this->tbl)) return false;
@@ -248,7 +289,12 @@
 
       return $this->qry($sql);
     }
-    public function join_select(array $dat, array $jn, string $tbl="", array $cnd=[]){
+    public function join_select(
+      array $dat,
+      array $jn,
+      string $tbl="",
+      array $cnd=[]
+    ){
       // Table Name
       if($tbl==""){
         if(empty($this->tbl)) return false;
@@ -289,7 +335,11 @@
     }
 
     # update method
-    public function update(array $dat, string $tbl="", array $cnd=[]){
+    public function update(
+      array $dat,
+      string $tbl="",
+      array $cnd=[]
+    ){
       // Table Name
       if($tbl==""){
         if(empty($this->tbl)) return false;
@@ -303,7 +353,6 @@
         return false;
       }
       else return false;
-
 
       if(count($cnd)>0){
         // Build Condition
